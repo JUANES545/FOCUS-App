@@ -2,6 +2,7 @@ package ui.screens
 
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,8 +14,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.List
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -27,50 +32,123 @@ import navigation.FocusTab
 import navigation.SettingsTab
 import navigation.TasksTab
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ui.components.MusicPlayer
 
 private val TopAppBarHeight = 66.dp
 private val NavigationBarHeight = 76.dp
 
+// CompositionLocal para controlar el MusicPlayer
+class MusicPlayerController {
+    var showMusicPlayer by mutableStateOf(false)
+        private set
+
+    fun showPlayer() {
+        showMusicPlayer = true
+    }
+
+    fun hidePlayer() {
+        showMusicPlayer = false
+    }
+}
+
+val LocalMusicPlayerController = compositionLocalOf<MusicPlayerController> {
+    error("MusicPlayerController not provided")
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsRootUI() {
-    TabNavigator(FocusTab) {
-        val currentTab = LocalTabNavigator.current.current
-        val showTopBar = currentTab != FocusTab
+    val musicPlayerController = remember { MusicPlayerController() }
 
-        Scaffold(
-            topBar = {
-                if (showTopBar) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = currentTab.options.title,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
+    CompositionLocalProvider(
+        LocalMusicPlayerController provides musicPlayerController
+    ) {
+        TabNavigator(FocusTab) {
+            val currentTab = LocalTabNavigator.current.current
+            val tabNavigator = LocalTabNavigator.current
+            val showTopBar = currentTab != FocusTab
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                Scaffold(
+                    topBar = {
+                        if (showTopBar) {
+                            TopAppBar(
+                                title = {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = currentTab.options.title,
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                },
+                                navigationIcon = {
+                                    if (currentTab == TasksTab || currentTab == SettingsTab) {
+                                        IconButton(
+                                            onClick = { tabNavigator.current = FocusTab }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.ArrowBack,
+                                                contentDescription = "Regresar",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    }
+                                },
+                                actions = {
+                                    if (currentTab == TasksTab) {
+                                        IconButton(
+                                            onClick = { /* TODO: Search functionality */ }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Search,
+                                                contentDescription = "Buscar",
+                                                tint = Color.White
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = { /* TODO: More options */ }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.MoreVert,
+                                                contentDescription = "Más opciones",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    }
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = Color(0xFF112B3C),
+                                    titleContentColor = Color.White
+                                )
                             )
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color(0xFF112B3C),
-                            titleContentColor = Color.White
-                        )
-                    )
+                        }
+                    },
+                    bottomBar = { BottomBar() }
+                ) { innerPadding ->
+                    Surface(
+                        Modifier
+                            .fillMaxSize()
+                            .then(
+                                if (showTopBar) Modifier.padding(
+                                    top = TopAppBarHeight,
+                                    bottom = NavigationBarHeight
+                                ) else Modifier
+                            )
+                    ) {
+                        CurrentTab()
+                    }
                 }
-            },
-            bottomBar = { BottomBar() }
-        ) { innerPadding ->
-            Surface(
-                Modifier
-                    .fillMaxSize()
-                    .then(
-                        if (showTopBar) Modifier.padding(
-                            top = TopAppBarHeight,
-                            bottom = NavigationBarHeight
-                        ) else Modifier
-                    )
-            ) {
-                CurrentTab()
+
+                // Music Player - Fuera del Scaffold para que aparezca sobre todo
+                MusicPlayer(
+                    isVisible = musicPlayerController.showMusicPlayer,
+                    onDismiss = { musicPlayerController.hidePlayer() }
+                )
             }
         }
     }

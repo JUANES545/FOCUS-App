@@ -4,8 +4,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SettingSwitchRow(
@@ -43,5 +46,16 @@ fun SettingSwitchRow(
     )
     HorizontalDivider(
         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+    )
+}
+
+@Preview
+@Composable
+fun PreviewSettingSwitchRow() {
+    val state = remember { mutableStateOf(true) }
+    SettingSwitchRow(
+        title = "Notificaciones",
+        subtitle = "Activar o desactivar notificaciones",
+        state = state
     )
 }

@@ -31,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ui.components.MusicPlayer
+import ui.screens.LocalMusicPlayerController
 
 import kotlinx.coroutines.launch
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -57,6 +59,7 @@ fun DashboardScreen() {
     var isTimerRunning by remember { mutableStateOf(false) }
     var timerValue by remember { mutableStateOf("25:00") }
     var showStats by remember { mutableStateOf(false) }
+    val musicPlayerController = LocalMusicPlayerController.current
 
     val modes = listOf("Enfoque", "Descanso corto", "Descanso largo")
     val currentDate = fechaActualFormateada() // Updated to match image
@@ -68,111 +71,116 @@ fun DashboardScreen() {
             )
         }
     } else {
-        Scaffold(
-            topBar = { } // Hidden TopAppBar
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .background(Color.Transparent)
-            ) {
-                // Header fijo
-                Row(
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Scaffold(
+                topBar = { } // Hidden TopAppBar
+            ) { innerPadding ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .background(Color.Transparent)
                 ) {
-                    Column {
-                        Text(
-                            text = "¡Hola, José!",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = currentDate,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    // Avatar con imagen profile.png
-                    Box(
+                    // Header fijo
+                    Row(
                         modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(
-                                Color.White,
-                                CircleShape
-                            )
-                            .border(
-                                2.dp,
-                                MaterialTheme.colorScheme.primary,
-                                CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(Res.drawable.profile),
-                            contentDescription = "Avatar",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-                // Contenido scrolleable debajo del header fijo
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    item {
-                        // Timer Card
-                        TimerCard(
-                            timerValue = timerValue,
-                            isRunning = isTimerRunning,
-                            onStart = { isTimerRunning = true },
-                            onPause = { isTimerRunning = false },
-                            onReset = {
-                                isTimerRunning = false
-                                timerValue = "25:00"
-                            },
-                            onSkip = { /* TODO: Skip to next */ }
-                        )
-                    }
+                        Column {
+                            Text(
+                                text = "¡Hola, José!",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Text(
+                                text = currentDate,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
 
-                    // Mode Chips
-                    item {
-                        ModeChips(
-                            modes = modes,
-                            selectedIndex = selectedMode,
-                            onModeSelected = { selectedMode = it }
-                        )
+                        // Avatar con imagen profile.png
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Color.White,
+                                    CircleShape
+                                )
+                                .border(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.primary,
+                                    CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(Res.drawable.profile),
+                                contentDescription = "Avatar",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
+                    // Contenido scrolleable debajo del header fijo
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        item {
+                            // Timer Card
+                            TimerCard(
+                                timerValue = timerValue,
+                                isRunning = isTimerRunning,
+                                onStart = { isTimerRunning = true },
+                                onPause = { isTimerRunning = false },
+                                onReset = {
+                                    isTimerRunning = false
+                                    timerValue = "25:00"
+                                },
+                                onSkip = { /* TODO: Skip to next */ }
+                            )
+                        }
 
-                    // Quick Actions
-                    item {
-                        QuickActionsGrid(
-                            onStatsClick = { showStats = true }
-                        )
-                    }
+                        // Mode Chips
+                        item {
+                            ModeChips(
+                                modes = modes,
+                                selectedIndex = selectedMode,
+                                onModeSelected = { selectedMode = it }
+                            )
+                        }
 
-                    // Upcoming Sessions
-                    item {
-                        UpcomingSessionsList()
-                    }
+                        // Quick Actions
+                        item {
+                            QuickActionsGrid(
+                                onStatsClick = { showStats = true },
+                                onWhiteNoiseClick = { musicPlayerController.showPlayer() }
+                            )
+                        }
 
-                    item {
-                        Spacer(Modifier.height(106.dp))
+                        // Upcoming Sessions
+                        item {
+                            UpcomingSessionsList()
+                        }
+
+                        item {
+                            Spacer(Modifier.height(106.dp))
+                        }
                     }
-                }
             }
         }
+    }
     }
 }
 
@@ -449,7 +457,8 @@ private fun ModeChips(
 
 @Composable
 private fun QuickActionsGrid(
-    onStatsClick: () -> Unit
+    onStatsClick: () -> Unit,
+    onWhiteNoiseClick: () -> Unit
 ) {
     val tabNavigator = LocalTabNavigator.current
 
@@ -496,7 +505,7 @@ private fun QuickActionsGrid(
                         icon = Icons.AutoMirrored.Filled.VolumeUp,
                         label = "White\nnoise",
                         iconColor = Color(0xFF9CA3AF), // Light gray
-                        onClick = { /* TODO: White noise */ }
+                        onClick = onWhiteNoiseClick
                     )
                 }
             }
@@ -589,27 +598,36 @@ private fun UpcomingSessionsList() {
     )
 
     Column {
+        // Título "Próximas sesiones"
         Text(
             text = "Próximas sesiones",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Medium,
+            fontSize = 18.sp,
+            lineHeight = 28.sp,
+            color = Color(0xFF112B3C),
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        // Lista de sesiones
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column {
-                upcomingSessions.forEachIndexed { index, session ->
+            upcomingSessions.forEach { session ->
+                // Card individual para cada sesión
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Colored dot
+                        // Punto de color
                         Box(
                             modifier = Modifier
                                 .size(12.dp)
@@ -618,35 +636,34 @@ private fun UpcomingSessionsList() {
 
                         Spacer(Modifier.width(12.dp))
 
-                        // Content
+                        // Contenido principal
                         Column(
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(
                                 text = session.title,
                                 style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp,
+                                lineHeight = 24.sp,
+                                color = Color(0xFF112B3C)
                             )
                             Text(
                                 text = session.duration,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                color = Color(0xFF4B5563)
                             )
                         }
 
-                        // Time
+                        // Hora
                         Text(
                             text = session.time,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-
-                    if (index < upcomingSessions.size - 1) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                            style = MaterialTheme.typography.bodySmall,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            color = Color(0xFF6B7280)
                         )
                     }
                 }
@@ -683,6 +700,6 @@ private fun fechaActualFormateada(): String {
 
 @Preview
 @Composable
-fun PreviewTabsRootUI() {
+fun PreviewDashboardScreen() {
     DashboardScreen()
 }
