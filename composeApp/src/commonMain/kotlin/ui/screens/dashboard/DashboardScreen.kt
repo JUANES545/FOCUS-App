@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import org.jetbrains.compose.resources.painterResource
 import focus_app.composeapp.generated.resources.Res
 import focus_app.composeapp.generated.resources.profile
@@ -454,32 +457,33 @@ private fun QuickActionsGrid(
         Text(
             text = "Acciones rápidas",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF112B3C),
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 0.dp)
         ) {
             items(4) { index ->
                 when (index) {
                     0 -> QuickActionCard(
-                        icon = "+",
-                        label = "Nueva sesión",
+                        icon = Icons.Default.Add,
+                        label = "Nueva\nsesión",
                         iconColor = Color(0xFFF66B0E), // Orange
                         onClick = { /* TODO: New session */ }
                     )
 
                     1 -> QuickActionCard(
-                        icon = "Ξ",
+                        icon = Icons.Default.BarChart,
                         label = "Estadísticas",
                         iconColor = Color(0xFF205375), // Primary blue
                         onClick = onStatsClick
                     )
 
                     2 -> QuickActionCard(
-                        icon = "☑",
+                        icon = Icons.Default.Checklist,
                         label = "Tareas",
                         iconColor = Color(0xFF112B3C), // Dark blue
                         onClick = {
@@ -489,9 +493,9 @@ private fun QuickActionsGrid(
                     )
 
                     3 -> QuickActionCard(
-                        icon = "🔊",
-                        label = "White noise",
-                        iconColor = Color.Gray,
+                        icon = Icons.AutoMirrored.Filled.VolumeUp,
+                        label = "White\nnoise",
+                        iconColor = Color(0xFF9CA3AF), // Light gray
                         onClick = { /* TODO: White noise */ }
                     )
                 }
@@ -502,7 +506,7 @@ private fun QuickActionsGrid(
 
 @Composable
 private fun QuickActionCard(
-    icon: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
     iconColor: Color,
     onClick: () -> Unit
@@ -516,7 +520,7 @@ private fun QuickActionCard(
 
     Card(
         modifier = Modifier
-            .size(width = 140.dp, height = 120.dp)
+            .size(width = 73.5.dp, height = 120.dp)
             .scale(scale)
             .clickable {
                 isPressed = true
@@ -528,36 +532,42 @@ private fun QuickActionCard(
                 }
             },
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            // Icon with colored background
+            // Icon with colored background - Fixed position
             Box(
                 modifier = Modifier
                     .size(48.dp)
                     .background(iconColor, RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = icon,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Normal,
+                color = Color(0xFF374151),
+                fontSize = 12.sp,
+                lineHeight = 14.sp,
+                maxLines = 2
             )
         }
     }
