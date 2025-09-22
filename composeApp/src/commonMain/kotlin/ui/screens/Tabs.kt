@@ -13,30 +13,26 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import navigation.FocusTab
 import navigation.SettingsTab
 import navigation.TasksTab
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.components.MusicPlayer
+import ui.components.ProfileModal
 
 private val TopAppBarHeight = 66.dp
 private val NavigationBarHeight = 76.dp
@@ -59,13 +55,33 @@ val LocalMusicPlayerController = compositionLocalOf<MusicPlayerController> {
     error("MusicPlayerController not provided")
 }
 
+// Controller para manejar la visibilidad del ProfileModal
+class ProfileModalController {
+    var showProfileModal by mutableStateOf(false)
+        private set
+
+    fun showModal() {
+        showProfileModal = true
+    }
+
+    fun hideModal() {
+        showProfileModal = false
+    }
+}
+
+val LocalProfileModalController = compositionLocalOf<ProfileModalController> {
+    error("ProfileModalController not provided")
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsRootUI() {
     val musicPlayerController = remember { MusicPlayerController() }
+    val profileModalController = remember { ProfileModalController() }
 
     CompositionLocalProvider(
-        LocalMusicPlayerController provides musicPlayerController
+        LocalMusicPlayerController provides musicPlayerController,
+        LocalProfileModalController provides profileModalController
     ) {
         TabNavigator(FocusTab) {
             val currentTab = LocalTabNavigator.current.current
@@ -165,6 +181,14 @@ fun TabsRootUI() {
                 MusicPlayer(
                     isVisible = musicPlayerController.showMusicPlayer,
                     onDismiss = { musicPlayerController.hidePlayer() }
+                )
+
+                // Profile Modal - Fuera del Scaffold para que aparezca sobre todo
+                ProfileModal(
+                    isVisible = profileModalController.showProfileModal,
+                    onDismiss = { profileModalController.hideModal() },
+                    userName = "José david",
+                    userEmail = "jose.tumama@gmail.com"
                 )
             }
         }

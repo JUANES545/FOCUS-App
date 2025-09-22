@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ui.components.MusicPlayer
 import ui.screens.LocalMusicPlayerController
+import ui.screens.LocalProfileModalController
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -94,6 +95,7 @@ fun DashboardScreen() {
     }
     var showStats by remember { mutableStateOf(false) }
     val musicPlayerController = LocalMusicPlayerController.current
+    val profileModalController = LocalProfileModalController.current
 
     val modes = listOf("Enfoque", "Descanso corto", "Descanso largo")
     val currentDate = fechaActualFormateada() // Updated to match image
@@ -117,14 +119,15 @@ fun DashboardScreen() {
                         .padding(innerPadding)
                         .background(Color.Transparent)
                 ) {
-                    // Header fijo
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                     // Header fijo - Clickable
+                     Row(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .padding(top = 16.dp, bottom = 8.dp, start = 24.dp, end = 24.dp)
+                             .clickable { profileModalController.showModal() },
+                         horizontalArrangement = Arrangement.SpaceBetween,
+                         verticalAlignment = Alignment.CenterVertically
+                     ) {
                         Column {
                             Text(
                                 text = "¡Hola, José!",
@@ -139,29 +142,30 @@ fun DashboardScreen() {
                             )
                         }
 
-                        // Avatar con imagen profile.png
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    Color.White,
-                                    CircleShape
-                                )
-                                .border(
-                                    2.dp,
-                                    MaterialTheme.colorScheme.primary,
-                                    CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(Res.drawable.profile),
-                                contentDescription = "Avatar",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                         // Avatar con imagen profile.png - Clickable
+                         Box(
+                             modifier = Modifier
+                                 .size(48.dp)
+                                 .clip(CircleShape)
+                                 .background(
+                                     Color.White,
+                                     CircleShape
+                                 )
+                                 .border(
+                                     2.dp,
+                                     MaterialTheme.colorScheme.primary,
+                                     CircleShape
+                                 )
+                                 .clickable { profileModalController.showModal() },
+                             contentAlignment = Alignment.Center
+                         ) {
+                             Image(
+                                 painter = painterResource(Res.drawable.profile),
+                                 contentDescription = "Avatar",
+                                 modifier = Modifier.fillMaxSize(),
+                                 contentScale = ContentScale.Crop
+                             )
+                         }
                     }
                     // Contenido scrolleable debajo del header fijo
                     LazyColumn(
