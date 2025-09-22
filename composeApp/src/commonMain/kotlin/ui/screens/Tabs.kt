@@ -1,9 +1,16 @@
-package navigation
+package ui.screens
 
+
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,10 +21,13 @@ import cafe.adriel.voyager.navigator.tab.TabNavigator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import navigation.FocusTab
+import navigation.SettingsTab
+import navigation.TasksTab
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-private val TopAppBarHeight = 56.dp
-private val NavigationBarHeight = 56.dp
+private val TopAppBarHeight = 66.dp
+private val NavigationBarHeight = 76.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +77,14 @@ fun TabsRootUI() {
 @Composable
 private fun BottomBar() {
     val tabNavigator = LocalTabNavigator.current
-    NavigationBar {
+    NavigationBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Color.Gray.copy(alpha = 0.3f)
+            )
+    ) {
         listOf(FocusTab, TasksTab, SettingsTab).forEach { tab ->
             val selected = tabNavigator.current == tab
             NavigationBarItem(
@@ -75,13 +92,34 @@ private fun BottomBar() {
                 onClick = { tabNavigator.current = tab },
                 icon = {
                     when (tab) {
-                        FocusTab -> Text("▶️", style = MaterialTheme.typography.titleMedium)
-                        TasksTab -> Text("☑️", style = MaterialTheme.typography.titleMedium)
-                        SettingsTab -> Text("⚙️", style = MaterialTheme.typography.titleMedium)
-                        else -> Text("•")
+                        FocusTab -> Icon(
+                            Icons.Default.PlayArrow,
+                            contentDescription = "Enfoque",
+                            tint = if (selected) Color(0xFFF66B0E) else Color(0xFFA3A3A3)
+                        )
+                        TasksTab -> Icon(
+                            Icons.Default.Check,
+                            contentDescription = "Tareas",
+                            tint = if (selected) Color(0xFFF66B0E) else Color(0xFFA3A3A3)
+                        )
+                        SettingsTab -> Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Ajustes",
+                            tint = if (selected) Color(0xFFF66B0E) else Color(0xFFA3A3A3)
+                        )
+                        else -> Icon(
+                            Icons.Default.Circle,
+                            contentDescription = "Tab",
+                            tint = if (selected) Color(0xFFF66B0E) else Color(0xFFA3A3A3)
+                        )
                     }
                 },
-                label = { Text(tab.options.title) }
+                label = {
+                    Text(
+                        text = tab.options.title,
+                        color = if (selected) Color(0xFFF66B0E) else Color(0xFFA3A3A3)
+                    )
+                }
             )
         }
     }

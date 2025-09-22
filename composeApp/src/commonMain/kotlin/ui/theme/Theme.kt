@@ -12,6 +12,12 @@ private val Surface      = Color(0xFFFFFFFF)
 private val TextPrimary  = Color(0xFF000000)
 val TextSecondary = TextPrimary.copy(alpha = 0.7f)
 
+// Colores para modo oscuro
+private val DarkBg = Color(0xFF121212)
+private val DarkSurface = Color(0xFF1E1E1E)
+private val DarkTextPrimary = Color(0xFFFFFFFF)
+private val DarkTextSecondary = DarkTextPrimary.copy(alpha = 0.7f)
+
 private val LightColors = lightColorScheme(
   primary = Primary,
   onPrimary = Color.White,
@@ -24,10 +30,25 @@ private val LightColors = lightColorScheme(
   outline = Primary
 )
 
+private val DarkColors = darkColorScheme(
+  primary = Primary,
+  onPrimary = Color.White,
+  secondary = Accent,
+  onSecondary = Color.White,
+  background = DarkBg,
+  onBackground = DarkTextPrimary,
+  surface = DarkSurface,
+  onSurface = DarkTextPrimary,
+  outline = Primary
+)
+
 @Composable
-fun FocusTheme(content: @Composable () -> Unit) {
+fun FocusTheme(
+  isDarkTheme: Boolean = false,
+  content: @Composable () -> Unit
+) {
   MaterialTheme(
-    colorScheme = LightColors,
+    colorScheme = if (isDarkTheme) DarkColors else LightColors,
     typography = Typography(),
     content = content
   )

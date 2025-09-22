@@ -5,10 +5,14 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.screens.tasks.TasksScreen
 import ui.theme.FocusTheme
+import ui.theme.LocalThemeController
+import ui.theme.rememberThemeController
 
 @Composable
 fun AppRoot() {
-    FocusTheme {
+    val themeController = rememberThemeController()
+
+    FocusTheme(isDarkTheme = themeController.isDarkTheme) {
         // Estado simplificado de autenticación
         var isLoggedIn by remember { mutableStateOf(false) }
         // Si no hay sesión, muestra Login; al iniciar sesión, reemplaza por Tabs
@@ -24,7 +28,9 @@ fun AppRoot() {
                     isLoggedIn = false
                     nav.replaceAll(LoginScreen)
                 }
-            )) {
+            ),
+            LocalThemeController provides themeController
+            ) {
                 nav.lastItem.Content()
             }
         }

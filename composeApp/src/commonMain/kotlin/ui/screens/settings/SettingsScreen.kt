@@ -17,12 +17,14 @@ import androidx.compose.ui.unit.dp
 import navigation.AuthController
 import navigation.LocalAuthController
 import ui.components.SettingSwitchRow
+import ui.theme.LocalThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen() {
     val auth = LocalAuthController.current
+    val themeController = LocalThemeController.current
 
     // Estados para sliders de Pomodoro
     var focusTime by remember { mutableStateOf(25f) }
@@ -35,41 +37,21 @@ fun SettingsScreen() {
     var vibrationEnabled by remember { mutableStateOf(false) }
 
     Scaffold(
-        bottomBar = {
-            Button(
-                onClick = { /* TODO: Save settings */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(86.dp)
-                    .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "Guardar cambios",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
+        // Eliminamos bottomBar
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .background(Color(0xFFF5F5F5)), // Fondo gris claro como en la imagen
-            verticalArrangement = Arrangement.spacedBy(0.dp)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             // Título principal centrado
             Text(
                 text = "Ajustes",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 24.dp),
@@ -80,7 +62,7 @@ fun SettingsScreen() {
             Text(
                 text = "Ajusta los tiempos de trabajo y descanso",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
@@ -109,9 +91,30 @@ fun SettingsScreen() {
             )
 
             // Otros Ajustes
-            OtherSettingsSection(auth)
+            OtherSettingsSection(auth, themeController)
 
-            Spacer(Modifier.height(100.dp)) // Espacio para el botón fijo
+            Spacer(Modifier.height(40.dp)) // Espacio antes del botón
+
+            Button(
+                onClick = { /* TODO: Save settings */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(96.dp)
+                    .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 36.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "Guardar cambios",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Spacer(Modifier.height(24.dp)) // Espacio extra al final
         }
     }
 }
@@ -265,14 +268,14 @@ private fun NotificationsSection(
                 text = "Notificaciones",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
         Text(
             text = "Configura las alertas y sonidos",
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -280,7 +283,7 @@ private fun NotificationsSection(
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column {
                 SettingSwitchRow(
@@ -306,7 +309,7 @@ private fun NotificationsSection(
 }
 
 @Composable
-private fun OtherSettingsSection(auth: AuthController) {
+private fun OtherSettingsSection(auth: AuthController, themeController: ui.theme.ThemeController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -318,14 +321,14 @@ private fun OtherSettingsSection(auth: AuthController) {
             text = "Otros Ajustes",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column {
                 // Tema
@@ -334,14 +337,14 @@ private fun OtherSettingsSection(auth: AuthController) {
                         Text(
                             text = "Tema",
                             style = MaterialTheme.typography.titleMedium,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     supportingContent = {
                         Text(
                             text = "Modo claro/oscuro",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     trailingContent = {
@@ -349,19 +352,21 @@ private fun OtherSettingsSection(auth: AuthController) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Claro",
+                                text = if (themeController.isDarkTheme) "Oscuro" else "Claro",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Black
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 text = "▼",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { themeController.toggleTheme() }
                 )
 
                 HorizontalDivider(
@@ -381,7 +386,7 @@ private fun OtherSettingsSection(auth: AuthController) {
                         Text(
                             text = "Salir de tu cuenta",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     leadingContent = {
@@ -394,7 +399,7 @@ private fun OtherSettingsSection(auth: AuthController) {
                         Text(
                             text = "▶",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     modifier = Modifier
@@ -413,6 +418,9 @@ fun SettingsScreenPreview() {
         LocalAuthController provides AuthController(
             onLoginOk = { /* no-op para preview */ },
             onLogout = { /* no-op para preview */ }
+        ),
+        LocalThemeController provides ui.theme.ThemeController(
+            remember { mutableStateOf(false) }
         )
     ) {
         SettingsScreen()
