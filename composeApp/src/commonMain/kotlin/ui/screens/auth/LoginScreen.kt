@@ -361,7 +361,7 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Google icon from SVG
+                // Google icon from PNG
                 Image(
                     painter = painterResource(Res.drawable.google_icon),
                     contentDescription = "Google",
@@ -398,7 +398,7 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Apple icon from SVG
+                // Apple icon from PNG
                 Image(
                     painter = painterResource(Res.drawable.apple_icon),
                     contentDescription = "Apple",
