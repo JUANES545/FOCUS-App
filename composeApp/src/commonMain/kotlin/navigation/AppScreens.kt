@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import androidx.compose.material3.Text
 
 // --------- Tabs ----------
 object FocusTab : Tab {
