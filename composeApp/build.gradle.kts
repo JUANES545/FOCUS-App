@@ -45,6 +45,8 @@ kotlin {
             implementation(libs.voyager.tab.navigator)
             // Material Icons Extended
             implementation(libs.compose.material.icons.extended)
+            // Kotlinx DateTime
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

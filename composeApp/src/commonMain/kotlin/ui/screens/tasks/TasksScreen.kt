@@ -254,7 +254,7 @@ data class TaskData(
 
 @Preview
 @Composable
-fun SettingsScreenPreview() {
+fun taskScreenPreview() {
     CompositionLocalProvider(
         LocalAuthController provides AuthController(
             onLoginOk = { /* no-op para preview */ },

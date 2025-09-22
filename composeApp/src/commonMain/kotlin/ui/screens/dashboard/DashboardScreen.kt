@@ -18,20 +18,31 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import org.jetbrains.compose.resources.painterResource
+import focus_app.composeapp.generated.resources.Res
+import focus_app.composeapp.generated.resources.profile
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+
 import kotlinx.coroutines.launch
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.core.screen.Screen
 import navigation.TasksTab
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import ui.screens.TabsRootUI
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 // Screen object for Statistics
 object StatsScreen : Screen {
-    @Composable override fun Content() = ui.screens.stats.StatsScreen()
+    @Composable
+    override fun Content() = ui.screens.stats.StatsScreen()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +54,7 @@ fun DashboardScreen() {
     var showStats by remember { mutableStateOf(false) }
 
     val modes = listOf("Enfoque", "Descanso corto", "Descanso largo")
-    val currentDate = "Viernes, 15 de Marzo" // Updated to match image
+    val currentDate = fechaActualFormateada() // Updated to match image
 
     if (showStats) {
         Navigator(StatsScreen) { navigator ->
@@ -55,19 +66,17 @@ fun DashboardScreen() {
         Scaffold(
             topBar = { } // Hidden TopAppBar
         ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item {
-                // Custom Header with greeting and avatar
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(Color.Transparent)
+            ) {
+                // Header fijo
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 8.dp),
+                        .padding(top = 16.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -85,69 +94,79 @@ fun DashboardScreen() {
                         )
                     }
 
-                    // Avatar
+                    // Avatar con imagen profile.png
                     Box(
                         modifier = Modifier
                             .size(48.dp)
+                            .clip(CircleShape)
                             .background(
                                 Color.White,
-                                RoundedCornerShape(24.dp)
+                                CircleShape
                             )
                             .border(
                                 2.dp,
                                 MaterialTheme.colorScheme.primary,
-                                RoundedCornerShape(24.dp)
+                                CircleShape
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "👤",
-                            style = MaterialTheme.typography.titleLarge
+                        Image(
+                            painter = painterResource(Res.drawable.profile),
+                            contentDescription = "Avatar",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
-            }
+                // Contenido scrolleable debajo del header fijo
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    item {
+                        // Timer Card
+                        TimerCard(
+                            timerValue = timerValue,
+                            isRunning = isTimerRunning,
+                            onStart = { isTimerRunning = true },
+                            onPause = { isTimerRunning = false },
+                            onReset = {
+                                isTimerRunning = false
+                                timerValue = "25:00"
+                            },
+                            onSkip = { /* TODO: Skip to next */ }
+                        )
+                    }
 
-            // Timer Card
-            item {
-                TimerCard(
-                    timerValue = timerValue,
-                    isRunning = isTimerRunning,
-                    onStart = { isTimerRunning = true },
-                    onPause = { isTimerRunning = false },
-                    onReset = {
-                        isTimerRunning = false
-                        timerValue = "25:00"
-                    },
-                    onSkip = { /* TODO: Skip to next */ }
-                )
-            }
+                    // Mode Chips
+                    item {
+                        ModeChips(
+                            modes = modes,
+                            selectedIndex = selectedMode,
+                            onModeSelected = { selectedMode = it }
+                        )
+                    }
 
-            // Mode Chips
-            item {
-                ModeChips(
-                    modes = modes,
-                    selectedIndex = selectedMode,
-                    onModeSelected = { selectedMode = it }
-                )
-            }
+                    // Quick Actions
+                    item {
+                        QuickActionsGrid(
+                            onStatsClick = { showStats = true }
+                        )
+                    }
 
-            // Quick Actions
-            item {
-                QuickActionsGrid(
-                    onStatsClick = { showStats = true }
-                )
-            }
+                    // Upcoming Sessions
+                    item {
+                        UpcomingSessionsList()
+                    }
 
-            // Upcoming Sessions
-            item {
-                UpcomingSessionsList()
+                    item {
+                        Spacer(Modifier.height(16.dp))
+                    }
+                }
             }
-
-            item {
-                Spacer(Modifier.height(16.dp))
-            }
-        }
         }
     }
 }
@@ -342,12 +361,14 @@ private fun QuickActionsGrid(
                         iconColor = Color(0xFFF66B0E), // Orange
                         onClick = { /* TODO: New session */ }
                     )
+
                     1 -> QuickActionCard(
                         icon = "Ξ",
                         label = "Estadísticas",
                         iconColor = Color(0xFF205375), // Primary blue
                         onClick = onStatsClick
                     )
+
                     2 -> QuickActionCard(
                         icon = "☑",
                         label = "Tareas",
@@ -357,6 +378,7 @@ private fun QuickActionsGrid(
                             tabNavigator.current = TasksTab
                         }
                     )
+
                     3 -> QuickActionCard(
                         icon = "🔊",
                         label = "White noise",
@@ -512,4 +534,25 @@ private fun UpcomingSessionsList() {
             }
         }
     }
+}
+
+private val diasSemana = listOf(
+    "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
+)
+private val meses = listOf(
+    "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+)
+
+private fun fechaActualFormateada(): String {
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val diaSemana = diasSemana[(now.dayOfWeek.ordinal + 6) % 7] // Ajuste para que lunes sea 0
+    val dia = now.dayOfMonth
+    val mes = meses[now.monthNumber - 1]
+    return "$diaSemana, $dia de $mes"
+}
+
+@Preview
+@Composable
+fun PreviewTabsRootUI() {
+    TabsRootUI()
 }
