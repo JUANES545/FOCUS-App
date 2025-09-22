@@ -27,6 +27,7 @@ import focus_app.composeapp.generated.resources.profile
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 import kotlinx.coroutines.launch
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -38,6 +39,7 @@ import ui.screens.TabsRootUI
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import navigation.DashboardScreen
 
 // Screen object for Statistics
 object StatsScreen : Screen {
@@ -163,7 +165,7 @@ fun DashboardScreen() {
                     }
 
                     item {
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(106.dp))
                     }
                 }
             }
@@ -259,37 +261,75 @@ private fun TimerCard(
             // Secondary action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedButton(
+                Button(
                     onClick = onPause,
                     modifier = Modifier
-                        .weight(1f)
+                        .width(88.dp)
                         .height(48.dp),
                     enabled = isRunning,
-                    shape = RoundedCornerShape(12.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEFEFEF),
+                        contentColor = Color(0xFF112B3C)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
                 ) {
-                    Text("Pausar")
+                    Text(
+                        text = "Pausar",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
+                    )
                 }
 
-                OutlinedButton(
+                Spacer(Modifier.width(6.dp))
+
+                Button(
                     onClick = onReset,
                     modifier = Modifier
-                        .weight(1f)
+                        .width(88.dp)
                         .height(48.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEFEFEF),
+                        contentColor = Color(0xFF112B3C)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
                 ) {
-                    Text("Reiniciar")
+                    Text(
+                        text = "Reiniciar",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
+                    )
                 }
 
-                OutlinedButton(
+                Spacer(Modifier.width(6.dp))
+
+                Button(
                     onClick = onSkip,
                     modifier = Modifier
-                        .weight(1f)
+                        .width(88.dp)
                         .height(48.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEFEFEF),
+                        contentColor = Color(0xFF112B3C)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
                 ) {
-                    Text("Omitir")
+                    Text(
+                        text = "Omitir",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
+                    )
                 }
             }
         }
@@ -302,35 +342,104 @@ private fun ModeChips(
     selectedIndex: Int,
     onModeSelected: (Int) -> Unit
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        items(modes.size) { index ->
-            val isSelected = selectedIndex == index
-            val scale by animateFloatAsState(
-                targetValue = if (isSelected) 1.05f else 1f,
-                animationSpec = tween(200),
-                label = "chip_scale"
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            modes.forEachIndexed { index, mode ->
+                val isSelected = selectedIndex == index
 
-            FilterChip(
-                onClick = { onModeSelected(index) },
-                label = {
-                    Text(
-                        text = modes[index],
-                        modifier = Modifier.scale(scale)
-                    )
-                },
-                selected = isSelected,
-                leadingIcon = if (isSelected) {
-                    {
-                        Text(
-                            text = "✓",
-                            style = MaterialTheme.typography.labelMedium
-                        )
+                Button(
+                    onClick = { onModeSelected(index) },
+                    modifier = Modifier
+                        .width(112.dp)
+                        .height(48.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSelected) Color(0xFF205375) else Color(0xFFE5E5E5),
+                        contentColor = if (isSelected) Color.White else Color(0xFF404040)
+                    ),
+                    shape = RoundedCornerShape(6.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    when (index) {
+                        0 -> {
+                            Text(
+                                text = "Enfoque",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp
+                            )
+                        }
+
+                        1 -> {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Descanso",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    fontSize = 12.sp,
+                                    lineHeight = 14.sp,
+                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                )
+                                Text(
+                                    text = "corto",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    fontSize = 12.sp,
+                                    lineHeight = 14.sp,
+                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                )
+                            }
+                        }
+
+                        2 -> {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Descanso",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    fontSize = 12.sp,
+                                    lineHeight = 14.sp,
+                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                )
+                                Text(
+                                    text = "largo",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    fontSize = 12.sp,
+                                    lineHeight = 14.sp,
+                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                )
+                            }
+                        }
                     }
-                } else null
-            )
+                }
+            }
         }
     }
 }
@@ -540,7 +649,18 @@ private val diasSemana = listOf(
     "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
 )
 private val meses = listOf(
-    "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre"
 )
 
 private fun fechaActualFormateada(): String {
@@ -554,5 +674,5 @@ private fun fechaActualFormateada(): String {
 @Preview
 @Composable
 fun PreviewTabsRootUI() {
-    TabsRootUI()
+    DashboardScreen()
 }

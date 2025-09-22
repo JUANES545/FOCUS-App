@@ -7,6 +7,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,30 +49,6 @@ fun SettingsScreen() {
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            // Título principal centrado
-            Text(
-                text = "Ajustes",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp),
-                textAlign = TextAlign.Center
-            )
-
-            // Subtítulo
-            Text(
-                text = "Ajusta los tiempos de trabajo y descanso",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 32.dp),
-                textAlign = TextAlign.Center
-            )
-
             // Configuración Pomodoro
             PomodoroConfigurationSection(
                 focusTime = focusTime,
@@ -132,8 +111,36 @@ private fun PomodoroConfigurationSection(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
+            .padding(top = 24.dp)
             .padding(bottom = 32.dp)
     ) {
+        // Título de sección
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Timer,
+                contentDescription = "Configuración Pomodoro",
+                tint = Color(0xFFF66B0E), // Accent color
+                modifier = Modifier
+                    .size(34.dp)
+                    .padding(end = 8.dp)
+            )
+            Text(
+                text = "Configuración Pomodoro",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+
+        Text(
+            text = "Ajusta los tiempos de trabajo y descanso",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
 
         // Slider de Duración de Enfoque
         PomodoroSlider(
@@ -185,7 +192,7 @@ private fun PomodoroSlider(
     maxLabel: String
 ) {
     Column(
-        modifier = Modifier.padding(bottom = 24.dp)
+        modifier = Modifier.padding(bottom = 32.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -195,18 +202,18 @@ private fun PomodoroSlider(
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = "${value.toInt()} min",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color(0xFFF66B0E), // Accent color
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Bold
             )
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         Slider(
             value = value,
@@ -214,12 +221,14 @@ private fun PomodoroSlider(
             valueRange = valueRange,
             steps = ((valueRange.endInclusive - valueRange.start) / step - 1).toInt(),
             colors = SliderDefaults.colors(
-                thumbColor = Color(0xFF205375), // Primary color
-                activeTrackColor = Color(0xFF205375),
+                thumbColor = Color(0xFF0075FF), // New blue color
+                activeTrackColor = Color(0xFF0075FF), // New blue color
                 inactiveTrackColor = Color.Gray.copy(alpha = 0.3f)
             ),
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -228,12 +237,12 @@ private fun PomodoroSlider(
             Text(
                 text = minLabel,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = maxLabel,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -259,10 +268,13 @@ private fun NotificationsSection(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
-            Text(
-                text = "🔔",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(end = 8.dp)
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = "Notificaciones",
+                tint = Color(0xFFF66B0E), // Accent color
+                modifier = Modifier
+                    .size(34.dp)
+                    .padding(end = 8.dp)
             )
             Text(
                 text = "Notificaciones",
@@ -289,19 +301,22 @@ private fun NotificationsSection(
                 SettingSwitchRow(
                     title = "Alertas",
                     subtitle = "Mostrar notificaciones",
-                    state = remember { mutableStateOf(alertsEnabled) }
+                    state = remember { mutableStateOf(alertsEnabled) },
+                    icon = Icons.Default.Info
                 )
 
                 SettingSwitchRow(
                     title = "Sonidos",
                     subtitle = "Reproducir sonidos de alerta",
-                    state = remember { mutableStateOf(soundsEnabled) }
+                    state = remember { mutableStateOf(soundsEnabled) },
+                    icon = Icons.Default.VolumeUp
                 )
 
                 SettingSwitchRow(
                     title = "Vibración",
                     subtitle = "Vibrar al finalizar",
-                    state = remember { mutableStateOf(vibrationEnabled) }
+                    state = remember { mutableStateOf(vibrationEnabled) },
+                    icon = Icons.Default.PhoneAndroid
                 )
             }
         }
@@ -317,13 +332,25 @@ private fun OtherSettingsSection(auth: AuthController, themeController: ui.theme
             .padding(bottom = 32.dp)
     ) {
         // Título de sección
-        Text(
-            text = "Otros Ajustes",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 16.dp)
-        )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Otros Ajustes",
+                tint = Color(0xFFF66B0E), // Accent color
+                modifier = Modifier
+                    .size(34.dp)
+                    .padding(end = 8.dp)
+            )
+            Text(
+                text = "Otros Ajustes",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -333,6 +360,13 @@ private fun OtherSettingsSection(auth: AuthController, themeController: ui.theme
             Column {
                 // Tema
                 ListItem(
+                    leadingContent = {
+                        Icon(
+                            imageVector = Icons.Default.Palette,
+                            contentDescription = "Tema",
+                            tint = Color(0xFF205375) // Primary color
+                        )
+                    },
                     headlineContent = {
                         Text(
                             text = "Tema",
@@ -356,11 +390,11 @@ private fun OtherSettingsSection(auth: AuthController, themeController: ui.theme
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = "▼",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            Spacer(Modifier.width(8.dp))
+                            Icon(
+                                imageVector = if (themeController.isDarkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
+                                contentDescription = "Desplegar tema",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     },
@@ -375,6 +409,13 @@ private fun OtherSettingsSection(auth: AuthController, themeController: ui.theme
 
                 // Cerrar sesión
                 ListItem(
+                    leadingContent = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Cerrar sesión",
+                            tint = Color.Red
+                        )
+                    },
                     headlineContent = {
                         Text(
                             text = "Cerrar sesión",
@@ -386,19 +427,6 @@ private fun OtherSettingsSection(auth: AuthController, themeController: ui.theme
                         Text(
                             text = "Salir de tu cuenta",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    leadingContent = {
-                        Text(
-                            text = "🚪",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    },
-                    trailingContent = {
-                        Text(
-                            text = "▶",
-                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
