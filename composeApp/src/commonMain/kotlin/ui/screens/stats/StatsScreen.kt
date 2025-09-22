@@ -1,14 +1,16 @@
 package ui.screens.stats
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-// Material Icons not available, using emojis instead
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +22,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import navigation.FocusTab
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,26 +41,31 @@ fun StatsScreen(
                     Text(
                         text = "Estadísticas",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        lineHeight = 28.sp,
+                        color = Color.White,
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Text(
-                            text = "←",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.White
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Regresar",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* TODO: Menu */ }) {
-                        Text(
-                            text = "⋮",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.White
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Más opciones",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 },
@@ -76,30 +83,43 @@ fun StatsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Timeframe Segmented Control
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth()
+            // Segmented Control
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .background(Color(0xFFEFEFEF), RoundedCornerShape(8.dp))
+                    .padding(4.dp)
             ) {
-                timeframes.forEachIndexed { index, timeframe ->
-                    SegmentedButton(
-                        onClick = { selectedTimeframe = index },
-                        shape = RoundedCornerShape(8.dp),
-                        selected = selectedTimeframe == index,
-                        colors = SegmentedButtonDefaults.colors(
-                            activeContainerColor = Color(0xFF112B3C),
-                            activeContentColor = Color.White,
-                            inactiveContainerColor = Color(0xFFF5F5F5),
-                            inactiveContentColor = Color(0xFF666666)
-                        )
-                    ) {
-                        Text(
-                            text = timeframe,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = if (selectedTimeframe == index) FontWeight.SemiBold else FontWeight.Normal
-                        )
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    timeframes.forEachIndexed { index, timeframe ->
+                        val isSelected = selectedTimeframe == index
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(36.dp)
+                                .background(
+                                    if (isSelected) Color(0xFF205375) else Color.Transparent,
+                                    RoundedCornerShape(6.dp)
+                                )
+                                .clickable { selectedTimeframe = index },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = timeframe,
+                                fontSize = 14.sp,
+                                lineHeight = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = if (isSelected) Color.White else Color(0xFF4B5563),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
@@ -108,14 +128,16 @@ fun StatsScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                shape = RoundedCornerShape(12.dp)
+                    .height(373.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEFEFEF))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(17.dp)
                 ) {
                     // Chart Title and Legend
                     Row(
@@ -125,8 +147,10 @@ fun StatsScreen(
                     ) {
                         Text(
                             text = "Horas de Enfoque",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF112B3C)
                         )
 
                         Row(
@@ -135,32 +159,36 @@ fun StatsScreen(
                             // Enfoque legend
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
                                         .size(12.dp)
-                                        .background(Color(0xFF205375), RoundedCornerShape(6.dp))
+                                        .background(Color(0xFF205375), RoundedCornerShape(9999.dp))
                                 )
                                 Text(
                                     text = "Enfoque",
-                                    style = MaterialTheme.typography.labelSmall
+                                    fontSize = 12.sp,
+                                    lineHeight = 16.sp,
+                                    color = Color(0xFF4B5563)
                                 )
                             }
 
                             // Descanso legend
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
                                         .size(12.dp)
-                                        .background(Color(0xFFF66B0E), RoundedCornerShape(6.dp))
+                                        .background(Color(0xFFF66B0E), RoundedCornerShape(9999.dp))
                                 )
                                 Text(
                                     text = "Descanso",
-                                    style = MaterialTheme.typography.labelSmall
+                                    fontSize = 12.sp,
+                                    lineHeight = 16.sp,
+                                    color = Color(0xFF4B5563)
                                 )
                             }
                         }
@@ -168,161 +196,160 @@ fun StatsScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    // Chart Placeholder
+                    // Chart Area
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
-                            .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
-                            .padding(8.dp),
+                            .height(192.dp)
+                            .background(Color.White, RoundedCornerShape(8.dp))
+                    ) {
+                        // Y-axis labels
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(start = 8.dp, top = 12.dp)
+                        ) {
+                            for (i in 0..5) {
+                                val value = (5 - i) * 2
+                                Text(
+                                    text = value.toString(),
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF666666),
+                                    modifier = Modifier.height(24.dp)
+                                )
+                            }
+                        }
+
+                        // Stacked Bar Chart using Canvas
+                        androidx.compose.foundation.Canvas(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 32.dp, end = 16.dp, top = 12.dp, bottom = 24.dp)
+                        ) {
+                            val chartWidth = size.width * 0.8f
+                            val chartHeight = size.height * 0.7f
+                            val startX = size.width * 0.1f
+                            val startY = size.height * 0.15f
+                            val barWidth = chartWidth / 7f
+
+                            // Sample data for the chart
+                            val focusData = listOf(2f, 3f, 1.5f, 4f, 2.5f, 2f, 1.5f)
+                            val breakData = listOf(1f, 1.5f, 2f, 1f, 1.5f, 2f, 1f)
+
+                            // Draw bars
+                            for (i in 0..6) {
+                                val x = startX + i * barWidth + barWidth * 0.1f
+                                val barWidthActual = barWidth * 0.8f
+
+                                // Break bar (bottom)
+                                val breakHeight = (breakData[i] / 10f) * chartHeight
+                                val breakY = startY + chartHeight - breakHeight
+                                drawRect(
+                                    color = Color(0xFFF66B0E),
+                                    topLeft = Offset(x, breakY),
+                                    size = androidx.compose.ui.geometry.Size(barWidthActual, breakHeight)
+                                )
+
+                                // Focus bar (top)
+                                val focusHeight = (focusData[i] / 10f) * chartHeight
+                                val focusY = breakY - focusHeight
+                                drawRect(
+                                    color = Color(0xFF205375),
+                                    topLeft = Offset(x, focusY),
+                                    size = androidx.compose.ui.geometry.Size(barWidthActual, focusHeight)
+                                )
+                            }
+
+                            // Draw grid lines
+                            for (i in 0..5) {
+                                val y = startY + (i * chartHeight / 5f)
+                                drawLine(
+                                    color = Color(0xFFEFEFEF),
+                                    start = Offset(startX, y),
+                                    end = Offset(startX + chartWidth, y),
+                                    strokeWidth = 1.dp.toPx()
+                                )
+                            }
+
+                            // Draw Y-axis labels (simplified for cross-platform compatibility)
+                            // Note: Text drawing in Canvas is complex in Compose Multiplatform
+                            // We'll use Text composables positioned over the canvas instead
+                        }
+
+                        // X-axis labels
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom").forEach { day ->
+                                Text(
+                                    text = day,
+                                    fontSize = 12.sp,
+                                    lineHeight = 15.sp,
+                                    color = Color(0xFF666666),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+
+                    // Daily Summary
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Wireframe chart using Canvas
-                        androidx.compose.foundation.Canvas(
-                            modifier = Modifier.fillMaxSize()
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val strokeWidth = 2.dp.toPx()
-                            val centerX = size.width / 2
-                            val centerY = size.height / 2
-
-                            // Draw diagonal lines to simulate chart
-                            drawLine(
-                                color = Color.Gray.copy(alpha = 0.3f),
-                                start = Offset(0f, size.height),
-                                end = Offset(size.width, 0f),
-                                strokeWidth = strokeWidth
-                            )
-                            drawLine(
-                                color = Color.Gray.copy(alpha = 0.3f),
-                                start = Offset(0f, 0f),
-                                end = Offset(size.width, size.height),
-                                strokeWidth = strokeWidth
-                            )
-                        }
-                    }
-
-                    // X-axis labels
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        listOf("L", "M", "X", "J", "V", "S", "D").forEach { day ->
                             Text(
-                                text = day,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                text = "6.5h",
+                                fontSize = 24.sp,
+                                lineHeight = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF112B3C),
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "Hoy",
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp,
+                                color = Color(0xFF6B7280),
+                                textAlign = TextAlign.Center
                             )
                         }
-                    }
-                }
-            }
-
-            // Today's Summary
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "4h 32m",
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "hoy",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-            }
-
-            // Metrics Cards
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Average Daily Card
-                Card(
-                    modifier = Modifier.weight(1f),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "⏰",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xFF205375)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "3h 45m",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Promedio diario",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                // Current Streak Card
-                Card(
-                    modifier = Modifier.weight(1f),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "🔥",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xFFF66B0E)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "7 días",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Racha actual",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }
 
             // Weekly Summary Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF112B3C)
-                )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(
+                        androidx.compose.ui.graphics.Brush.horizontalGradient(
+                            colors = listOf(Color(0xFF205375), Color(0xFF112B3C))
+                        ),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(16.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "Resumen Semanal",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        fontSize = 18.sp,
+                        lineHeight = 28.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
                     )
 
                     Spacer(Modifier.height(16.dp))
@@ -337,14 +364,18 @@ fun StatsScreen(
                         ) {
                             Text(
                                 text = "85%",
-                                style = MaterialTheme.typography.headlineMedium,
+                                fontSize = 24.sp,
+                                lineHeight = 28.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color(0xFFF66B0E),
+                                textAlign = TextAlign.Center
                             )
                             Text(
                                 text = "Meta Alcanzada",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.White.copy(alpha = 0.8f)
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp,
+                                color = Color.White.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
                             )
                         }
 
@@ -354,14 +385,18 @@ fun StatsScreen(
                         ) {
                             Text(
                                 text = "7",
-                                style = MaterialTheme.typography.headlineMedium,
+                                fontSize = 24.sp,
+                                lineHeight = 28.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                textAlign = TextAlign.Center
                             )
                             Text(
                                 text = "Días Activos",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.White.copy(alpha = 0.8f)
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp,
+                                color = Color.White.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
                             )
                         }
 
@@ -371,14 +406,18 @@ fun StatsScreen(
                         ) {
                             Text(
                                 text = "4.1h",
-                                style = MaterialTheme.typography.headlineMedium,
+                                fontSize = 24.sp,
+                                lineHeight = 28.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                textAlign = TextAlign.Center
                             )
                             Text(
                                 text = "Promedio",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.White.copy(alpha = 0.8f)
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp,
+                                color = Color.White.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
                             )
                         }
                     }

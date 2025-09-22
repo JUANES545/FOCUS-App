@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 val PrimaryDark = Color(0xFF112B3C)
 val Primary      = Color(0xFF205375)
 val Accent       = Color(0xFFF66B0E)
+val Success      = Color(0xFF4CAF50) // Verde para tareas completadas
 private val Bg           = Color(0xFFEFEFEF)
 private val Surface      = Color(0xFFFFFFFF)
 private val TextPrimary  = Color(0xFF000000)

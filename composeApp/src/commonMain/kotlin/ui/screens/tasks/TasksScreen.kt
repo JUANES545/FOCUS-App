@@ -28,6 +28,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.screens.settings.SettingsScreen
 import ui.theme.Accent
 import ui.theme.PrimaryDark
+import ui.theme.Primary
+import ui.theme.Success
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,6 +168,7 @@ fun TasksScreen() {
                             hours = task.minutes,
                             category = task.priority,
                             completed = task.completed,
+                            taskStatus = selectedTab, // 0: Pendientes, 1: En curso, 2: Hechas
                             onCheckedChange = { /* TODO: Update task completion */ }
                         )
                     }
@@ -182,6 +185,7 @@ private fun TaskCard(
     hours: Int?,
     category: String?,
     completed: Boolean,
+    taskStatus: Int, // 0: Pendientes, 1: En curso, 2: Hechas
     onCheckedChange: (Boolean) -> Unit
 ) {
     Card(
@@ -273,11 +277,18 @@ private fun TaskCard(
                 }
 
                 // Status indicator
+                val statusColor = when (taskStatus) {
+                    0 -> Accent      // Pendientes - Naranja
+                    1 -> Primary     // En curso - Azul
+                    2 -> Success     // Hechas - Verde
+                    else -> Accent
+                }
+
                 Box(
                     modifier = Modifier
                         .size(12.dp)
                         .clip(CircleShape)
-                        .background(Accent)
+                        .background(statusColor)
                 )
             }
         }
