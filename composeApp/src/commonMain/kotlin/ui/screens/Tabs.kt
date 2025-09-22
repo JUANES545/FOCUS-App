@@ -1,6 +1,8 @@
 package ui.screens
 
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -140,7 +142,22 @@ fun TabsRootUI() {
                                 ) else Modifier
                             )
                     ) {
-                        CurrentTab()
+                        AnimatedContent(
+                            targetState = currentTab,
+                            transitionSpec = {
+                                slideInHorizontally(
+                                    initialOffsetX = { it / 3 },
+                                    animationSpec = tween(400, easing = EaseOutCubic)
+                                ) + fadeIn(animationSpec = tween(400)) togetherWith
+                                slideOutHorizontally(
+                                    targetOffsetX = { -it / 3 },
+                                    animationSpec = tween(400, easing = EaseInCubic)
+                                ) + fadeOut(animationSpec = tween(400))
+                            },
+                            label = "tabTransition"
+                        ) {
+                            it.Content()
+                        }
                     }
                 }
 

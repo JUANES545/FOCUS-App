@@ -35,6 +35,7 @@ import ui.components.MusicPlayer
 import ui.screens.LocalMusicPlayerController
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.core.screen.Screen
@@ -58,6 +59,39 @@ fun DashboardScreen() {
     var selectedMode by remember { mutableStateOf(0) } // 0: Enfoque, 1: Descanso corto, 2: Descanso largo
     var isTimerRunning by remember { mutableStateOf(false) }
     var timerValue by remember { mutableStateOf("25:00") }
+    var timeRemaining by remember { mutableStateOf(25 * 60) } // 25 minutes in seconds
+
+    // Timer durations for each mode
+    val timerDurations = listOf(25 * 60, 5 * 60, 15 * 60) // 25min, 5min, 15min
+
+    // Animation for timer
+    val timerScale by animateFloatAsState(
+        targetValue = if (isTimerRunning) 1.05f else 1f,
+        animationSpec = tween(300, easing = EaseInOutCubic),
+        label = "timerScale"
+    )
+
+    // Coroutine scope for timer
+    val scope = rememberCoroutineScope()
+
+    // Timer logic
+    LaunchedEffect(isTimerRunning, timeRemaining) {
+        if (isTimerRunning && timeRemaining > 0) {
+            delay(1000)
+            timeRemaining--
+            timerValue = "${(timeRemaining / 60).toString().padStart(2, '0')}:${(timeRemaining % 60).toString().padStart(2, '0')}"
+        } else if (timeRemaining <= 0) {
+            isTimerRunning = false
+            timerValue = "00:00"
+        }
+    }
+
+    // Update timer when mode changes
+    LaunchedEffect(selectedMode) {
+        timeRemaining = timerDurations[selectedMode]
+        timerValue = "${(timeRemaining / 60).toString().padStart(2, '0')}:${(timeRemaining % 60).toString().padStart(2, '0')}"
+        isTimerRunning = false
+    }
     var showStats by remember { mutableStateOf(false) }
     val musicPlayerController = LocalMusicPlayerController.current
 
@@ -146,9 +180,15 @@ fun DashboardScreen() {
                                 onPause = { isTimerRunning = false },
                                 onReset = {
                                     isTimerRunning = false
-                                    timerValue = "25:00"
+                                    timeRemaining = timerDurations[selectedMode]
+                                    timerValue = "${(timeRemaining / 60).toString().padStart(2, '0')}:${(timeRemaining % 60).toString().padStart(2, '0')}"
                                 },
-                                onSkip = { /* TODO: Skip to next */ }
+                                onSkip = {
+                                    isTimerRunning = false
+                                    timeRemaining = timerDurations[selectedMode]
+                                    timerValue = "${(timeRemaining / 60).toString().padStart(2, '0')}:${(timeRemaining % 60).toString().padStart(2, '0')}"
+                                },
+                                timerScale = timerScale
                             )
                         }
 
@@ -191,7 +231,8 @@ private fun TimerCard(
     onStart: () -> Unit,
     onPause: () -> Unit,
     onReset: () -> Unit,
-    onSkip: () -> Unit
+    onSkip: () -> Unit,
+    timerScale: Float = 1f
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -236,9 +277,10 @@ private fun TimerCard(
                     )
                 }
 
-                // Timer text
+                // Timer text with animation
                 Text(
                     text = timerValue,
+                    modifier = Modifier.scale(timerScale),
                     style = MaterialTheme.typography.displayLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface

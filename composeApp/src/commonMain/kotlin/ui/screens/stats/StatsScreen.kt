@@ -1,5 +1,7 @@
 package ui.screens.stats
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import navigation.FocusTab
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +36,41 @@ fun StatsScreen(
 ) {
     var selectedTimeframe by remember { mutableStateOf(0) } // 0: Día, 1: Semana, 2: Mes
     val timeframes = listOf("Día", "Semana", "Mes")
+
+    // Animation for chart changes
+    val chartAnimation by animateFloatAsState(
+        targetValue = selectedTimeframe.toFloat(),
+        animationSpec = tween(durationMillis = 500, easing = EaseInOutCubic),
+        label = "chartAnimation"
+    )
+
+    // Different data for each timeframe
+    val chartData = when (selectedTimeframe) {
+        0 -> { // Día
+            Pair(
+                listOf(2f, 3f, 1.5f, 4f, 2.5f, 2f, 1.5f), // focus
+                listOf(1f, 1.5f, 2f, 1f, 1.5f, 2f, 1f)    // break
+            )
+        }
+        1 -> { // Semana
+            Pair(
+                listOf(3.5f, 4f, 2.5f, 5f, 3f, 2.5f, 1.5f), // focus
+                listOf(1.5f, 2f, 2.5f, 1.5f, 2f, 2.5f, 1.5f) // break
+            )
+        }
+        else -> { // Mes
+            Pair(
+                listOf(2.5f, 3.5f, 2f, 4.5f, 3.5f, 2f, 1f), // focus
+                listOf(1.2f, 1.8f, 2.2f, 1.2f, 1.8f, 2.2f, 1.2f) // break
+            )
+        }
+    }
+
+    val summaryData = when (selectedTimeframe) {
+        0 -> "6.5h" to "Hoy"
+        1 -> "28.5h" to "Esta semana"
+        else -> "125h" to "Este mes"
+    }
 
     Scaffold(
         topBar = {
@@ -78,14 +116,22 @@ fun StatsScreen(
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+        AnimatedVisibility(
+            visible = true,
+            enter = slideInVertically(
+                initialOffsetY = { it / 4 },
+                animationSpec = tween(600, easing = EaseOutCubic)
+            ) + fadeIn(animationSpec = tween(600)),
+            label = "screenEnter"
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp)),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
             // Segmented Control
             Box(
                 modifier = Modifier
@@ -220,7 +266,7 @@ fun StatsScreen(
                             }
                         }
 
-                        // Stacked Bar Chart using Canvas
+                        // Stacked Bar Chart using Canvas with Animation
                         androidx.compose.foundation.Canvas(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -232,17 +278,21 @@ fun StatsScreen(
                             val startY = size.height * 0.15f
                             val barWidth = chartWidth / 7f
 
-                            // Sample data for the chart
-                            val focusData = listOf(2f, 3f, 1.5f, 4f, 2.5f, 2f, 1.5f)
-                            val breakData = listOf(1f, 1.5f, 2f, 1f, 1.5f, 2f, 1f)
+                            // Animated data interpolation
+                            val animatedFocusData = chartData.first.map { value ->
+                                value * chartAnimation + (value * 0.8f) * (1f - chartAnimation)
+                            }
+                            val animatedBreakData = chartData.second.map { value ->
+                                value * chartAnimation + (value * 0.8f) * (1f - chartAnimation)
+                            }
 
-                            // Draw bars
+                            // Draw bars with animation
                             for (i in 0..6) {
                                 val x = startX + i * barWidth + barWidth * 0.1f
                                 val barWidthActual = barWidth * 0.8f
 
-                                // Break bar (bottom)
-                                val breakHeight = (breakData[i] / 10f) * chartHeight
+                                // Break bar (bottom) with animation
+                                val breakHeight = (animatedBreakData[i] / 10f) * chartHeight
                                 val breakY = startY + chartHeight - breakHeight
                                 drawRect(
                                     color = Color(0xFFF66B0E),
@@ -250,8 +300,8 @@ fun StatsScreen(
                                     size = androidx.compose.ui.geometry.Size(barWidthActual, breakHeight)
                                 )
 
-                                // Focus bar (top)
-                                val focusHeight = (focusData[i] / 10f) * chartHeight
+                                // Focus bar (top) with animation
+                                val focusHeight = (animatedFocusData[i] / 10f) * chartHeight
                                 val focusY = breakY - focusHeight
                                 drawRect(
                                     color = Color(0xFF205375),
@@ -298,35 +348,50 @@ fun StatsScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    // Daily Summary
+                    // Daily Summary with Animation
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "6.5h",
-                                fontSize = 24.sp,
-                                lineHeight = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF112B3C),
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = "Hoy",
-                                fontSize = 12.sp,
-                                lineHeight = 14.sp,
-                                color = Color(0xFF6B7280),
-                                textAlign = TextAlign.Center
-                            )
+                        AnimatedContent(
+                            targetState = summaryData,
+                            transitionSpec = {
+                                slideInVertically(
+                                    initialOffsetY = { it / 2 },
+                                    animationSpec = tween(300, easing = EaseInOutCubic)
+                                ) + fadeIn(animationSpec = tween(300)) togetherWith
+                                slideOutVertically(
+                                    targetOffsetY = { -it / 2 },
+                                    animationSpec = tween(300, easing = EaseInOutCubic)
+                                ) + fadeOut(animationSpec = tween(300))
+                            },
+                            label = "summaryAnimation"
+                        ) { (value, label) ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = value,
+                                    fontSize = 24.sp,
+                                    lineHeight = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF112B3C),
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = label,
+                                    fontSize = 12.sp,
+                                    lineHeight = 14.sp,
+                                    color = Color(0xFF6B7280),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            // Weekly Summary Card
+            // Weekly Summary Card - Below Focus Hours Chart Card
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -423,6 +488,17 @@ fun StatsScreen(
                     }
                 }
             }
+        }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun StatsScreenPreview() {
+    Box(modifier = Modifier.size(width = 400.dp, height = 800.dp)) {
+        MaterialTheme {
+            StatsScreen()
         }
     }
 }

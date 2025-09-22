@@ -14,10 +14,12 @@ private val TextPrimary  = Color(0xFF000000)
 val TextSecondary = TextPrimary.copy(alpha = 0.7f)
 
 // Colores para modo oscuro
-private val DarkBg = Color(0xFF121212)
-private val DarkSurface = Color(0xFF1E1E1E)
-private val DarkTextPrimary = Color(0xFFFFFFFF)
-private val DarkTextSecondary = DarkTextPrimary.copy(alpha = 0.7f)
+private val DarkBg = Color(0xFF0D1117) // Más oscuro para mejor contraste
+private val DarkSurface = Color(0xFF161B22) // Superficie más clara que el fondo
+private val DarkSurfaceVariant = Color(0xFF21262D) // Para cards y elementos
+private val DarkTextPrimary = Color(0xFFF0F6FC) // Texto principal más suave
+private val DarkTextSecondary = Color(0xFF8B949E) // Texto secundario más legible
+private val DarkOutline = Color(0xFF30363D) // Bordes más visibles
 
 private val LightColors = lightColorScheme(
   primary = Primary,
@@ -40,7 +42,10 @@ private val DarkColors = darkColorScheme(
   onBackground = DarkTextPrimary,
   surface = DarkSurface,
   onSurface = DarkTextPrimary,
-  outline = Primary
+  surfaceVariant = DarkSurfaceVariant,
+  onSurfaceVariant = DarkTextSecondary,
+  outline = DarkOutline,
+  outlineVariant = DarkOutline.copy(alpha = 0.5f)
 )
 
 @Composable
