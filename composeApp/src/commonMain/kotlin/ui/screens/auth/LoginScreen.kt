@@ -1,5 +1,14 @@
 package ui.screens.auth
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.EaseInCubic
+import androidx.compose.animation.core.EaseOutCubic
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -26,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import navigation.LocalAuthController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.theme.TextSecondary
+import androidx.compose.runtime.CompositionLocalProvider
 import org.jetbrains.compose.resources.painterResource
 import focus_app.composeapp.generated.resources.Res
 import focus_app.composeapp.generated.resources.google_icon
@@ -34,7 +44,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onForgotPasswordClick: () -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -44,42 +56,59 @@ fun LoginScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        AnimatedContent(
+            targetState = "login",
+            transitionSpec = {
+                slideInHorizontally(
+                    initialOffsetX = { it / 3 },
+                    animationSpec = tween(400, easing = EaseOutCubic)
+                ) + fadeIn(animationSpec = tween(400)) togetherWith
+                slideOutHorizontally(
+                    targetOffsetX = { -it / 3 },
+                    animationSpec = tween(400, easing = EaseInCubic)
+                ) + fadeOut(animationSpec = tween(400))
+            },
+            label = "loginTransition"
         ) {
-            Spacer(Modifier.height(84.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(84.dp))
 
-            // Header Section
-            HeaderSection()
+                // Header Section
+                HeaderSection()
 
-            Spacer(Modifier.height(44.dp))
+                Spacer(Modifier.height(44.dp))
 
-            // Login Section
-            LoginSection(
-                email = email,
-                onEmailChange = { email = it },
-                password = password,
-                onPasswordChange = { password = it },
-                passwordVisible = passwordVisible,
-                onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-                onLoginClick = { auth.onLoginOk() }
-            )
+                // Login Section
+                LoginSection(
+                    email = email,
+                    onEmailChange = { email = it },
+                    password = password,
+                    onPasswordChange = { password = it },
+                    passwordVisible = passwordVisible,
+                    onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+                    onLoginClick = { auth.onLoginOk() },
+                    onForgotPasswordClick = { auth.onForgotPassword() },
+                    onSignUpClick = { auth.onSignUp() }
+                )
 
-            Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
 
-            // Social Login Section
-            SocialLoginSection(auth = auth)
+                // Social Login Section
+                SocialLoginSection(auth = auth)
 
-            Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(32.dp))
 
-            // Footer
-            FooterSection()
+                // Footer
+                FooterSection()
+            }
         }
     }
 }
@@ -122,7 +151,7 @@ private fun HeaderSection() {
             text = "F.O.C.U.S.",
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF112B3C),
+            color = MaterialTheme.colorScheme.onBackground,
             lineHeight = 36.sp,
             textAlign = TextAlign.Center
         )
@@ -134,7 +163,7 @@ private fun HeaderSection() {
             text = "Flexible Organizer for Concentration Using Schedules",
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            color = Color(0xFF4B5563),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 23.sp,
             textAlign = TextAlign.Center
         )
@@ -149,7 +178,9 @@ private fun LoginSection(
     onPasswordChange: (String) -> Unit,
     passwordVisible: Boolean,
     onPasswordVisibilityToggle: () -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onSignUpClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.width(336.dp)
@@ -164,21 +195,21 @@ private fun LoginSection(
                     text = "Correo electrónico",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFF999999),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 19.sp
                 )
             },
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = 16.sp,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onSurface
             ),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF111827),
-                unfocusedBorderColor = Color(0xFF111827),
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedLabelColor = Color(0xFF999999),
-                unfocusedLabelColor = Color(0xFF999999)
+                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
             shape = RoundedCornerShape(0.dp),
             singleLine = true,
@@ -208,22 +239,22 @@ private fun LoginSection(
                     text = "Contraseña",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFF999999),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 19.sp
                 )
             },
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = 16.sp,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onSurface
             ),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF111827),
-                unfocusedBorderColor = Color(0xFF111827),
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedLabelColor = Color(0xFF999999),
-                unfocusedLabelColor = Color(0xFF999999)
+                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
             shape = RoundedCornerShape(0.dp),
             singleLine = true,
@@ -253,13 +284,13 @@ private fun LoginSection(
             horizontalArrangement = Arrangement.End
         ) {
             TextButton(
-                onClick = { /* TODO: Navigate to forgot password */ }
+                onClick = onForgotPasswordClick
             ) {
                 Text(
                     text = "¿Olvidaste tu contraseña?",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF205375),
+                    color = MaterialTheme.colorScheme.primary,
                     lineHeight = 20.sp
                 )
             }
@@ -275,7 +306,10 @@ private fun LoginSection(
                 .height(56.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black
+                containerColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                    Color(0xFF21262D) // Color oscuro para modo oscuro
+                else
+                    Color.Black // Negro para modo claro
             )
         ) {
             Text(
@@ -291,21 +325,21 @@ private fun LoginSection(
 
         // Create account button
         OutlinedButton(
-            onClick = { /* TODO: Navigate to sign up */ },
+            onClick = onSignUpClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp),
             shape = RoundedCornerShape(12.dp),
-            border = androidx.compose.foundation.BorderStroke(2.dp, Color.Black),
+            border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color.Black
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             Text(
                 text = "Crear cuenta",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 19.sp
             )
         }
@@ -324,7 +358,7 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
         ) {
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = Color(0xFF6B7280),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 thickness = 1.dp
             )
 
@@ -333,13 +367,13 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
                 modifier = Modifier.padding(horizontal = 16.dp),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF6B7280),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
 
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = Color(0xFF6B7280),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 thickness = 1.dp
             )
         }
@@ -353,9 +387,9 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
                 .fillMaxWidth()
                 .height(62.dp),
             shape = RoundedCornerShape(12.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEFEFEF)),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color(0xFF374151)
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             Row(
@@ -375,7 +409,7 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
                     text = "Continuar con Google",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF374151),
+                    color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 24.sp
                 )
             }
@@ -390,9 +424,9 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
                 .fillMaxWidth()
                 .height(62.dp),
             shape = RoundedCornerShape(12.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEFEFEF)),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color(0xFF374151)
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             Row(
@@ -412,7 +446,7 @@ private fun SocialLoginSection(auth: navigation.AuthController) {
                     text = "Continuar con Apple",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF374151),
+                    color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 24.sp
                 )
             }
