@@ -93,10 +93,16 @@ Versión actual compilada y lista para instalar:
 
 ## ✨ Funcionalidades implementadas
 
-* **Autenticación:** Pantalla de Login y Crear Cuenta con validación de formularios.
+* **Autenticación:**
+  - Pantalla de Login con validación de formularios
+  - Pantalla de Crear Cuenta (Registro) con validación completa
+  - Pantalla de Recuperar Contraseña con envío de enlace
 * **Dashboard:** Vista principal con temporizador Pomodoro (enfoque y descansos).
 * **Estadísticas:** Visualización de métricas de productividad y gráficos.
-* **Gestión de tareas:** Listado, creación y edición de tareas con categorías.
+* **Gestión de tareas:**
+  - Listado de tareas existentes
+  - Pantalla de Crear Nueva Tarea con campos completos
+  - Categorización y fechas de entrega
 * **Ajustes:** Configuración de tiempos, notificaciones y preferencias del usuario.
 
 Todas las pantallas son **navegables** mediante **Voyager Tabs** y cumplen el flujo definido en los mockups de Figma.
@@ -113,31 +119,6 @@ Todas las pantallas son **navegables** mediante **Voyager Tabs** y cumplen el fl
 * **Xcode 15+** (solo en Mac, para compilar iOS)
 * **Gradle 8.5+**
 * **JDK 11+**
-
----
-
-## 🎨 Design System
-
-El proyecto implementa un sistema de diseño consistente basado en:
-
-* **Paleta de colores:**
-  - Primary: `#205375`
-  - Primary Dark: `#112B3C`
-  - Accent: `#F66B0E`
-  - Background: `#FFFFFF`
-  - Surface: `#F8F9FA`
-
-* **Componentes:** Material 3 Components con customización
-* **Navegación:** Voyager TabNavigator
-
----
-
-## 📝 Notas de implementación
-
-* El proyecto está construido siguiendo **Google Material Design 3**.
-* La navegación se implementa con **Voyager** (`TabNavigator`).
-* Se usa la **paleta de colores y design system** definido en Figma.
-* Esta entrega corresponde a la fase de **maquetación funcional**, con navegación completa entre pantallas.
 
 ---
 
