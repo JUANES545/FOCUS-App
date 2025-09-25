@@ -92,7 +92,6 @@ El proyecto implementa un sistema de diseño consistente basado en:
   - Background: `#FFFFFF`
   - Surface: `#F8F9FA`
 
-* **Tipografía:** Material Design 3 Typography
 * **Componentes:** Material 3 Components con customización
 * **Navegación:** Voyager TabNavigator
 
@@ -104,7 +103,6 @@ El proyecto implementa un sistema de diseño consistente basado en:
 * La navegación se implementa con **Voyager** (`TabNavigator`).
 * Se usa la **paleta de colores y design system** definido en Figma.
 * Esta entrega corresponde a la fase de **maquetación funcional**, con navegación completa entre pantallas.
-* **Corrección aplicada:** Se solucionó el error de compatibilidad con SVG en Android convirtiendo los iconos a formato PNG.
 
 ---
 
@@ -128,17 +126,6 @@ El proyecto implementa un sistema de diseño consistente basado en:
 * [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform)
 * [Voyager Navigation](https://github.com/adrielcafe/voyager)
 * [Material Design 3](https://m3.material.io/)
-
----
-
-## 🐛 Solución de problemas
-
-**Error "Android platform doesn't support SVG format":** ✅ **Solucionado**
-- Se convirtieron los archivos SVG a PNG para compatibilidad con Android.
-
-**Build falla en iOS:**
-- Asegúrate de tener Xcode 15+ instalado
-- Verifica que tu cuenta de desarrollador esté configurada correctamente
 
 ---
 
