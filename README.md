@@ -73,9 +73,10 @@ También es posible compilar desde terminal:
 
 ### 📹 Video Tutorial
 
-> **🎥 Video de instalación y configuración**
->
-> *Espacio reservado para video tutorial que se subirá próximamente*
+> **🎥 Configuración y demo de la App Android/iOS**
+
+[![Demo de la App](https://img.youtube.com/vi/h3dxaNwxlfg/0.jpg)](https://youtu.be/h3dxaNwxlfg)
+
 
 ---
 
