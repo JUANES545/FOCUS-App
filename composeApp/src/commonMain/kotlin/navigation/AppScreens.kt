@@ -42,6 +42,18 @@ object LoginScreen : Screen {
   @Composable override fun Content() = ui.screens.auth.LoginScreen()
 }
 
+object ForgotPasswordScreen : Screen {
+  @Composable override fun Content() = ui.screens.auth.ForgotPasswordScreen()
+}
+
+object SignUpScreen : Screen {
+  @Composable override fun Content() = ui.screens.auth.SignUpScreen()
+}
+
+object CreateTaskScreen : Screen {
+  @Composable override fun Content() = ui.screens.tasks.CreateTaskScreen()
+}
+
 object TabsRootScreen : Screen {
   @Composable override fun Content() = TabsRootUI()
 }
