@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import navigation.LocalMainNavigator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.text.style.TextAlign
 import navigation.FocusTab
@@ -33,6 +34,7 @@ import navigation.TasksTab
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.components.MusicPlayer
 import ui.components.ProfileModal
+import ui.components.TopBar
 
 private val TopAppBarHeight = 66.dp
 private val NavigationBarHeight = 76.dp
@@ -78,8 +80,10 @@ val LocalProfileModalController = compositionLocalOf<ProfileModalController> {
 fun TabsRootUI() {
     val musicPlayerController = remember { MusicPlayerController() }
     val profileModalController = remember { ProfileModalController() }
+    val mainNavigator = LocalMainNavigator.current
 
     CompositionLocalProvider(
+        LocalMainNavigator provides mainNavigator,
         LocalMusicPlayerController provides musicPlayerController,
         LocalProfileModalController provides profileModalController
     ) {
@@ -92,57 +96,14 @@ fun TabsRootUI() {
                 Scaffold(
                     topBar = {
                         if (showTopBar) {
-                            TopAppBar(
-                                title = {
-                                    Text(
-                                        text = currentTab.options.title,
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .offset(x = if (currentTab == TasksTab) (-32).dp else (-16).dp)
-                                    )
-                                },
-                                navigationIcon = {
-                                    if (currentTab == TasksTab || currentTab == SettingsTab) {
-                                        IconButton(
-                                            onClick = { tabNavigator.current = FocusTab }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.ArrowBack,
-                                                contentDescription = "Regresar",
-                                                tint = Color.White
-                                            )
-                                        }
-                                    }
-                                },
-                                actions = {
-                                    if (currentTab == TasksTab) {
-                                        IconButton(
-                                            onClick = { /* TODO: Search functionality */ }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Search,
-                                                contentDescription = "Buscar",
-                                                tint = Color.White
-                                            )
-                                        }
-                                        IconButton(
-                                            onClick = { /* TODO: More options */ }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.MoreVert,
-                                                contentDescription = "Más opciones",
-                                                tint = Color.White
-                                            )
-                                        }
-                                    }
-                                },
-                                colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = Color(0xFF112B3C),
-                                    titleContentColor = Color.White
-                                )
+                            TopBar(
+                                title = currentTab.options.title,
+                                showBackButton = currentTab == TasksTab || currentTab == SettingsTab,
+                                showSearchButton = currentTab == TasksTab,
+                                showMenuButton = false,
+                                onBackClick = { tabNavigator.current = FocusTab },
+                                onSearchClick = { /* TODO: Search functionality */ },
+                                onMenuClick = { /* TODO: More options */ }
                             )
                         }
                     },
