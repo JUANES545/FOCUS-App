@@ -21,9 +21,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import navigation.LocalMainNavigator
 import navigation.AuthController
 import navigation.LocalAuthController
 import navigation.FocusTab
+import navigation.CreateTaskScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.screens.settings.SettingsScreen
 import ui.theme.Accent
@@ -37,6 +39,7 @@ fun TasksScreen() {
     var selectedTab by remember { mutableStateOf(0) } // 0: Pendientes, 1: En curso, 2: Hechas
     val tabs = listOf("Pendientes", "En curso", "Hechas")
     val tabNavigator = LocalTabNavigator.current
+    val navigator = LocalMainNavigator.current
 
     // Mock data for tasks matching the image
     val pendingTasks = listOf(
@@ -70,7 +73,7 @@ fun TasksScreen() {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Add new task */ },
+                onClick = { navigator?.push(CreateTaskScreen) },
                 containerColor = Accent,
                 contentColor = Color.White,
                 shape = CircleShape,
