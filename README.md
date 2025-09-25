@@ -18,9 +18,34 @@ La aplicación comparte una misma base de código para Android e iOS, incluyendo
 
 ---
 
-## ▶️ Cómo ejecutar la aplicación
+## ▶️ Cómo ejecutar el proyecto
 
-### 🔹 Android
+### 📱 Plataformas Soportadas
+
+Esta aplicación está desarrollada en **Kotlin Multiplatform** y puede ejecutarse en:
+- **Android** (APK)
+- **iOS** (Framework)
+
+> **💡 Recomendación**: Para una experiencia completa, es recomendable compilar el proyecto en **Mac**, ya que permite compilar tanto Android como iOS. En **Windows** solo se puede compilar la parte de Android.
+
+### 🛠️ Requisitos del Sistema
+
+#### Para Android:
+- **Android Studio**: Versión **Narwhal 3 Feature Drop 2025.1.3** o superior
+- **JetBrains Toolbox**: Recomendado para manejar diferentes versiones de Android Studio
+- **Extensiones necesarias**:
+  - Kotlin Multiplatform
+  - Compose Multiplatform
+
+#### Para iOS (solo en Mac):
+- **Xcode**: Versión 15+ instalado
+- **Extensiones necesarias**:
+  - Kotlin Multiplatform
+  - Compose Multiplatform
+
+### 🚀 Instrucciones de Compilación
+
+#### 🔹 Android
 Para compilar y ejecutar en Android Studio:
 ```bash
 ./gradlew :composeApp:assembleDebug
@@ -33,7 +58,7 @@ composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
 También puedes abrir el proyecto en **Android Studio**, seleccionar la configuración `composeApp` y ejecutar en un emulador o dispositivo físico.
 
-### 🔹 iOS
+#### 🔹 iOS (solo en Mac)
 
 Para compilar y ejecutar en iOS:
 
@@ -45,6 +70,12 @@ También es posible compilar desde terminal:
 ```bash
 ./gradlew :composeApp:linkDebugFrameworkIosArm64
 ```
+
+### 📹 Video Tutorial
+
+> **🎥 Video de instalación y configuración**
+>
+> *Espacio reservado para video tutorial que se subirá próximamente*
 
 ---
 
@@ -73,9 +104,12 @@ Todas las pantallas son **navegables** mediante **Voyager Tabs** y cumplen el fl
 
 ## ⚙️ Requisitos técnicos
 
-* **Android Studio 2025.1.3** o superior
-* **Kotlin Multiplatform plugin** actualizado
-* **Xcode 15+** (para compilar en iOS)
+* **Android Studio**: Narwhal 3 Feature Drop 2025.1.3 o superior
+* **JetBrains Toolbox**: Para manejar diferentes versiones de Android Studio
+* **Extensiones necesarias**:
+  - Kotlin Multiplatform
+  - Compose Multiplatform
+* **Xcode 15+** (solo en Mac, para compilar iOS)
 * **Gradle 8.5+**
 * **JDK 11+**
 
@@ -113,7 +147,7 @@ El proyecto implementa un sistema de diseño consistente basado en:
 2. Habilita "Fuentes desconocidas" en tu dispositivo Android
 3. Instala el APK
 
-### iOS
+### iOS (solo en Mac)
 1. Abre el proyecto en Xcode
 2. Conecta tu dispositivo iOS
 3. Selecciona tu dispositivo y ejecuta (requiere cuenta de desarrollador)
