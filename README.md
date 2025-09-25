@@ -83,8 +83,8 @@ También es posible compilar desde terminal:
 
 Versión actual compilada y lista para instalar:
 
-* **Android APK** 👉 [📥 Descargar APK](./composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk)
-* **iOS Framework** 👉 [📥 Descargar Framework](./composeApp/build/bin/iosArm64/debugFramework/ComposeApp.framework)
+* **Android APK** 👉 [📥 Descargar APK](https://github.com/JUANES545/FOCUS-App/raw/refs/heads/master/APK/FOCUS%20App.apk)
+* **iOS Framework** 👉 [📥 Descargar Framework](.composeApp/build/xcode-frameworks/Debug/iphonesimulator26.0/ComposeApp.framework)
 
 > **Nota para iOS**: Para instalar en un dispositivo iOS, necesitarás abrir el proyecto en Xcode y compilar desde ahí, ya que requiere firma digital de Apple Developer.
 
