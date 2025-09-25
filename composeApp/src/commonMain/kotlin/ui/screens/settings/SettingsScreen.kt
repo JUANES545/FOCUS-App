@@ -81,7 +81,10 @@ fun SettingsScreen() {
                     .height(96.dp)
                     .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
+                    containerColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                        Color(0xFF21262D) // Color oscuro para modo oscuro
+                    else
+                        Color.Black, // Negro para modo claro
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(8.dp)
@@ -208,7 +211,7 @@ private fun PomodoroSlider(
             Text(
                 text = "${value.toInt()} min",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFFF66B0E), // Accent color
+                color = MaterialTheme.colorScheme.secondary, // Accent color
                 fontWeight = FontWeight.Bold
             )
         }
@@ -221,9 +224,9 @@ private fun PomodoroSlider(
             valueRange = valueRange,
             steps = ((valueRange.endInclusive - valueRange.start) / step - 1).toInt(),
             colors = SliderDefaults.colors(
-                thumbColor = Color(0xFF0075FF), // New blue color
-                activeTrackColor = Color(0xFF0075FF), // New blue color
-                inactiveTrackColor = Color.Gray.copy(alpha = 0.3f)
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTrackColor = MaterialTheme.colorScheme.primary,
+                inactiveTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
             ),
             modifier = Modifier.fillMaxWidth()
         )
