@@ -108,7 +108,14 @@ fun DashboardScreen() {
         }
     } else {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                        Color(0xFF161B22) // Fondo gris oscuro para modo oscuro
+                    else
+                        Color(0xFFEFEFEF) // Fondo gris claro para modo claro
+                )
         ) {
             Scaffold(
                 topBar = { } // Hidden TopAppBar
@@ -117,7 +124,12 @@ fun DashboardScreen() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .background(Color.Transparent)
+                        .background(
+                            if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                Color(0xFF161B22) // Fondo gris oscuro para modo oscuro
+                            else
+                                Color(0xFFEFEFEF) // Fondo gris claro para modo claro
+                        )
                 ) {
                      // Header fijo - Clickable
                      Row(
@@ -301,7 +313,10 @@ private fun TimerCard(
                     .height(56.dp),
                 enabled = !isRunning,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
+                    containerColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                        Color(0xFF21262D) // Color oscuro para modo oscuro
+                    else
+                        Color.Black, // Negro para modo claro
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(16.dp)
@@ -328,8 +343,14 @@ private fun TimerCard(
                         .height(48.dp),
                     enabled = isRunning,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFEFEFEF),
-                        contentColor = Color(0xFF112B3C)
+                        containerColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFF30363D) // Color gris oscuro para modo oscuro
+                        else
+                            Color(0xFFEFEFEF), // Gris claro para modo claro
+                        contentColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                        else
+                            Color(0xFF112B3C) // Texto oscuro para modo claro
                     ),
                     shape = RoundedCornerShape(12.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
@@ -351,8 +372,14 @@ private fun TimerCard(
                         .width(88.dp)
                         .height(48.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFEFEFEF),
-                        contentColor = Color(0xFF112B3C)
+                        containerColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFF30363D) // Color gris oscuro para modo oscuro
+                        else
+                            Color(0xFFEFEFEF), // Gris claro para modo claro
+                        contentColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                        else
+                            Color(0xFF112B3C) // Texto oscuro para modo claro
                     ),
                     shape = RoundedCornerShape(12.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
@@ -374,8 +401,14 @@ private fun TimerCard(
                         .width(88.dp)
                         .height(48.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFEFEFEF),
-                        contentColor = Color(0xFF112B3C)
+                        containerColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFF30363D) // Color gris oscuro para modo oscuro
+                        else
+                            Color(0xFFEFEFEF), // Gris claro para modo claro
+                        contentColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                        else
+                            Color(0xFF112B3C) // Texto oscuro para modo claro
                     ),
                     shape = RoundedCornerShape(12.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
@@ -424,8 +457,18 @@ private fun ModeChips(
                         .width(112.dp)
                         .height(48.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelected) Color(0xFF205375) else Color(0xFFE5E5E5),
-                        contentColor = if (isSelected) Color.White else Color(0xFF404040)
+                        containerColor = if (isSelected)
+                            Color(0xFF205375) // Azul seleccionado (igual en ambos modos)
+                        else if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFF30363D) // Gris oscuro para modo oscuro
+                        else
+                            Color(0xFFE5E5E5), // Gris claro para modo claro
+                        contentColor = if (isSelected)
+                            Color.White // Blanco para seleccionado
+                        else if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                        else
+                            Color(0xFF404040) // Texto oscuro para modo claro
                     ),
                     shape = RoundedCornerShape(6.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
@@ -455,7 +498,12 @@ private fun ModeChips(
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                     fontSize = 12.sp,
                                     lineHeight = 14.sp,
-                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                    color = if (isSelected)
+                                        Color.White
+                                    else if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                        Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                                    else
+                                        Color(0xFF404040) // Texto oscuro para modo claro
                                 )
                                 Text(
                                     text = "corto",
@@ -464,7 +512,12 @@ private fun ModeChips(
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                     fontSize = 12.sp,
                                     lineHeight = 14.sp,
-                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                    color = if (isSelected)
+                                        Color.White
+                                    else if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                        Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                                    else
+                                        Color(0xFF404040) // Texto oscuro para modo claro
                                 )
                             }
                         }
@@ -481,7 +534,12 @@ private fun ModeChips(
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                     fontSize = 12.sp,
                                     lineHeight = 14.sp,
-                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                    color = if (isSelected)
+                                        Color.White
+                                    else if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                        Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                                    else
+                                        Color(0xFF404040) // Texto oscuro para modo claro
                                 )
                                 Text(
                                     text = "largo",
@@ -490,7 +548,12 @@ private fun ModeChips(
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                     fontSize = 12.sp,
                                     lineHeight = 14.sp,
-                                    color = if (isSelected) Color.White else Color(0xFF404040)
+                                    color = if (isSelected)
+                                        Color.White
+                                    else if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                        Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                                    else
+                                        Color(0xFF404040) // Texto oscuro para modo claro
                                 )
                             }
                         }
@@ -513,7 +576,10 @@ private fun QuickActionsGrid(
             text = "Acciones rápidas",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF112B3C),
+            color = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                Color(0xFFF0F6FC) // Texto claro para modo oscuro
+            else
+                Color(0xFF112B3C), // Texto oscuro para modo claro
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -533,14 +599,17 @@ private fun QuickActionsGrid(
                     1 -> QuickActionCard(
                         icon = Icons.Default.BarChart,
                         label = "Estadísticas",
-                        iconColor = Color(0xFF205375), // Primary blue
+                        iconColor = Color(0xFF205375), // Primary blue (igual en ambos modos)
                         onClick = onStatsClick
                     )
 
                     2 -> QuickActionCard(
                         icon = Icons.Default.Checklist,
                         label = "Tareas",
-                        iconColor = Color(0xFF112B3C), // Dark blue
+                        iconColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                        else
+                            Color(0xFF112B3C), // Azul oscuro para modo claro
                         onClick = {
                             // Navigate to Tasks tab
                             tabNavigator.current = TasksTab
@@ -550,7 +619,10 @@ private fun QuickActionsGrid(
                     3 -> QuickActionCard(
                         icon = Icons.AutoMirrored.Filled.VolumeUp,
                         label = "White\nnoise",
-                        iconColor = Color(0xFF9CA3AF), // Light gray
+                        iconColor = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                            Color(0xFF8B949E) // Gris más claro para modo oscuro
+                        else
+                            Color(0xFF9CA3AF), // Gris claro para modo claro
                         onClick = onWhiteNoiseClick
                     )
                 }
@@ -619,7 +691,10 @@ private fun QuickActionCard(
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF374151),
+                color = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                    Color(0xFF8B949E) // Texto gris claro para modo oscuro
+                else
+                    Color(0xFF374151), // Texto gris oscuro para modo claro
                 fontSize = 12.sp,
                 lineHeight = 14.sp,
                 maxLines = 2
@@ -651,7 +726,10 @@ private fun UpcomingSessionsList() {
             fontWeight = FontWeight.Medium,
             fontSize = 18.sp,
             lineHeight = 28.sp,
-            color = Color(0xFF112B3C),
+            color = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                Color(0xFFF0F6FC) // Texto claro para modo oscuro
+            else
+                Color(0xFF112B3C), // Texto oscuro para modo claro
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -692,14 +770,20 @@ private fun UpcomingSessionsList() {
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
-                                color = Color(0xFF112B3C)
+                                color = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                    Color(0xFFF0F6FC) // Texto claro para modo oscuro
+                                else
+                                    Color(0xFF112B3C) // Texto oscuro para modo claro
                             )
                             Text(
                                 text = session.duration,
                                 style = MaterialTheme.typography.bodySmall,
                                 fontSize = 14.sp,
                                 lineHeight = 20.sp,
-                                color = Color(0xFF4B5563)
+                                color = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                    Color(0xFF8B949E) // Texto gris claro para modo oscuro
+                                else
+                                    Color(0xFF4B5563) // Texto gris oscuro para modo claro
                             )
                         }
 
@@ -709,7 +793,10 @@ private fun UpcomingSessionsList() {
                             style = MaterialTheme.typography.bodySmall,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
-                            color = Color(0xFF6B7280)
+                            color = if (MaterialTheme.colorScheme.background == Color(0xFF0D1117))
+                                Color(0xFF8B949E) // Texto gris claro para modo oscuro
+                            else
+                                Color(0xFF6B7280) // Texto gris oscuro para modo claro
                         )
                     }
                 }
